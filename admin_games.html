@@ -1,0 +1,15 @@
+{% extends 'base.html' %}{% block title %}Game Management · E-Learning{% endblock %}{% block content %}
+<section class="py-card" style="border-color:#237a91">
+  <h2>🎮 Game Management</h2>
+  <p class="page-intro">Edit every game's time limit, question count, title, choices, correct answers, and points. Use Test Game to preview it as an administrator without saving a student attempt.</p>
+  <div style="overflow-x:auto"><table><thead><tr><th>Lesson / Course</th><th>Game</th><th>Questions</th><th>Time</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+  {% for r in rows %}<tr>
+    <td><strong>{{ r.lesson_title }}</strong><br><span class="muted">{{ r.course_title }}</span></td>
+    <td><strong>{{ r.title }}</strong><br><span class="muted">{{ r.description }}</span></td>
+    <td>{{ r.question_total }} available<br><span class="muted">{{ r.question_count }} per play</span></td>
+    <td>{{ r.time_limit }} sec</td>
+    <td>{% if r.enabled %}<span style="color:#68f0bd">Enabled</span>{% else %}<span style="color:#ff8aa9">Disabled</span>{% endif %}</td>
+    <td><div class="actions" style="margin-top:0"><a class="py-btn primary" href="{{ url_for('admin_game_studio',gid=r.id) }}">⚙ Edit Game</a><a class="py-btn" href="{{ url_for('admin_game_test',gid=r.id) }}">▶ Test Game</a></div></td>
+  </tr>{% else %}<tr><td colspan="6" class="empty">Add lessons first to create learning games.</td></tr>{% endfor %}
+  </tbody></table></div>
+</section>{% endblock %}

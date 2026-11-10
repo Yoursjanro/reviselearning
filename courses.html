@@ -1,0 +1,1 @@
+{% extends 'base.html' %}{% block content %}<h1>📚 Courses</h1><div class="py-grid">{% for c in courses %}<div class="py-card"><h2>{{ c.title }}</h2><p>{{ c.description }}</p><p class="py-muted">{{ c.lesson_count }} lessons</p><a class="py-btn" href="{{ url_for('course',cid=c.id) }}">View Lessons</a></div>{% else %}<p>No courses yet.</p>{% endfor %}</div>{% endblock %}

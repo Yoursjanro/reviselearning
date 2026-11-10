@@ -1,0 +1,16 @@
+{% extends 'base.html' %}{% block title %}Test Game · E-Learning{% endblock %}{% block content %}
+<section class="py-card">
+<div class="page-head"><div><p class="muted">ADMIN PREVIEW · Results are not saved to student records</p><h1 style="margin:6px 0">▶ Test: {{ game.title }}</h1><p class="muted">{{ game.description }} · Lesson: {{ game.lesson_title }}</p></div><a class="py-btn" href="{{ url_for('admin_game_studio',gid=game.id) }}">← Game Studio</a></div>
+{% if result %}
+<div class="py-card"><h2>Test Result: {{ result.score }}/{{ result.total }}</h2><p>Practice points: {{ result.points }} · This test did not change student points, leaderboard, or reports.</p><div class="actions"><a class="py-btn primary" href="{{ url_for('admin_game_test',gid=game.id) }}">Play Again</a><a class="py-btn" href="{{ url_for('admin_game_studio',gid=game.id) }}">Edit Questions</a></div></div>
+{% else %}
+<div class="py-grid" style="grid-template-columns:repeat(3,minmax(0,1fr))"><div class="py-card"><div class="muted">TIME LEFT</div><div class="stat-num"><span id="timer">{{ game.time_limit }}</span>s</div></div><div class="py-card"><div class="muted">QUESTIONS</div><div class="stat-num">{{ questions|length }}</div></div><div class="py-card"><div class="muted">MODE</div><div style="font-weight:800">Admin Test</div></div></div>
+{% if not questions %}<p class="empty">There are no questions to test. Add questions in Game Studio first.</p>{% else %}
+<form method="post" class="py-card" id="test-form"><input type="hidden" name="time_expired" id="time-expired" value="0">
+{% for q in questions %}<div style="padding:16px 0;border-bottom:1px solid #24334c"><h3>{{ loop.index }}. {{ q.question }}</h3>{% for k in ['A','B','C','D'] %}<label style="display:flex;gap:10px;align-items:flex-start;font-weight:400"><input style="width:auto;margin:3px 0" type="radio" name="{{ q.id }}" value="{{ k }}" required> <span><strong>{{ k }}.</strong> {{ q['option_'+k.lower()] }}</span></label>{% endfor %}</div>{% endfor %}
+<div class="actions"><button class="primary" id="submit-test">Submit Test</button></div></form>
+<script>
+(function(){let remaining={{ game.time_limit|int }};const timer=document.getElementById('timer');const form=document.getElementById('test-form');const expired=document.getElementById('time-expired');const submit=document.getElementById('submit-test');const tick=()=>{timer.textContent=remaining;if(remaining<=10)timer.style.color='#ff7799';if(remaining<=0){expired.value='1';form.querySelectorAll('input[type=radio]').forEach(x=>x.required=false);form.submit();return;}remaining--;setTimeout(tick,1000);};tick();})();
+</script>
+{% endif %}{% endif %}
+</section>{% endblock %}

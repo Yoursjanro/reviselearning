@@ -1,0 +1,1 @@
+{% extends 'base.html' %}{% block content %}<h1>📝 Quizzes</h1><div class="py-grid">{% for q in quizzes %}<div class="py-card"><h3>{{ q.title }}</h3><p class="py-muted">{{ q.course_title }}</p><a class="py-btn" href="{{ url_for('quiz',qid=q.id) }}">Start Quiz</a></div>{% endfor %}</div>{% endblock %}

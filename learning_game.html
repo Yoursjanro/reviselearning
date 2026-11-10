@@ -1,0 +1,13 @@
+{% extends 'base.html' %}{% block title %}{{ game.title }} · E-Learning{% endblock %}{% block content %}
+<section class="py-card">
+<div class="page-head"><div><h1 style="margin:0">{{ game.title }}</h1><p class="muted">{{ game.description }} · Lesson: {{ game.lesson_title }}</p></div><div class="stat" style="min-height:0;margin:0;padding:14px;text-align:center"><span class="muted">TIME LEFT</span><div class="stat-num"><span id="timer">{{ game.time_limit }}</span>s</div></div></div>
+{% if result %}<div class="py-card"><h2>Score: {{ result.score }}/{{ result.total }}</h2><p>Points earned: {{ result.points }}</p><div class="actions"><a class="py-btn primary" href="{{ url_for('games') }}">Back to Arcade</a><a class="py-btn" href="{{ url_for('learning_game',gid=game.id) }}">Play Again</a></div></div>
+{% elif not questions %}<p class="empty">No questions are available for this game yet.</p><a class="py-btn" href="{{ url_for('games') }}">Back to Arcade</a>
+{% else %}
+<form method="post" class="py-card" id="student-game-form"><input type="hidden" name="time_left" id="time-left" value="{{ game.time_limit }}">
+{% for q in questions %}<div style="padding:16px 0;border-bottom:1px solid #24334c"><h3>{{ loop.index }}. {{ q.question }}</h3>{% for k in ['A','B','C','D'] %}<label style="display:flex;gap:10px;align-items:flex-start;font-weight:400"><input style="width:auto;margin:3px 0" type="radio" name="{{ q.id }}" value="{{ k }}" required> <span><strong>{{ k }}.</strong> {{ q['option_'+k.lower()] }}</span></label>{% endfor %}</div>{% endfor %}
+<div class="actions"><button class="primary" id="submit-game">Submit Answers</button></div></form>
+<script>
+(function(){let remaining={{ game.time_limit|int }};const timer=document.getElementById('timer');const form=document.getElementById('student-game-form');const left=document.getElementById('time-left');const tick=()=>{timer.textContent=remaining;left.value=remaining;if(remaining<=10)timer.style.color='#ff7799';if(remaining<=0){form.querySelectorAll('input[type=radio]').forEach(x=>x.required=false);form.submit();return;}remaining--;setTimeout(tick,1000);};tick();})();
+</script>
+{% endif %}</section>{% endblock %}

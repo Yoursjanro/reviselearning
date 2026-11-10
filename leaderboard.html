@@ -1,0 +1,1 @@
+{% extends 'base.html' %}{% block content %}<h1>🏆 Leaderboard</h1><div class="py-card"><table><tr><th>Rank</th><th>Student</th><th>Points</th></tr>{% for r in rows %}<tr><td>{{ loop.index }}</td><td>{{ r.full_name }}</td><td>{{ r.points }}</td></tr>{% endfor %}</table></div>{% endblock %}

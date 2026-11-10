@@ -1,0 +1,15 @@
+{% extends 'base.html' %}{% block title %}Admin Dashboard · E-Learning{% endblock %}{% block content %}
+{% if user.role=='admin' %}
+<section class="py-card admin-hero"><h1>Welcome, System Administrator! 👋</h1><p class="muted">Continue learning and earn points, badges, and achievements.</p></section>
+<div class="py-grid">
+<a class="stat" href="{{ url_for('admin_users',view=1) }}"><div class="stat-icon">👨‍🎓</div><div class="stat-num">{{ stats['Students'] }}</div><div class="stat-label">Students · Click to view</div></a>
+<a class="stat" href="{{ url_for('admin_courses',view=1) }}"><div class="stat-icon">📚</div><div class="stat-num">{{ stats['Courses'] }}</div><div class="stat-label">Courses · Click to view</div></a>
+<a class="stat" href="{{ url_for('admin_lessons',view=1) }}"><div class="stat-icon">📖</div><div class="stat-num">{{ stats['Lessons'] }}</div><div class="stat-label">Lessons · Click to view</div></a>
+<a class="stat" href="{{ url_for('admin_courses',view=1) }}"><div class="stat-icon">📝</div><div class="stat-num">{{ stats['Quizzes'] }}</div><div class="stat-label">Quizzes · Click to view</div></a>
+<a class="stat" href="{{ url_for('admin_games') }}"><div class="stat-icon">🎮</div><div class="stat-num">{{ stats['Learning Games'] }}</div><div class="stat-label">Learning Games · Click to view</div></a>
+<a class="stat" href="{{ url_for('admin_games') }}"><div class="stat-icon">❓</div><div class="stat-num">{{ stats['Game Questions'] }}</div><div class="stat-label">Game Questions · Click to view</div></a>
+</div>
+<section class="py-card"><h2 class="section-title">Administration</h2><p class="muted">Manage courses, lessons, quizzes, student records, and the learning game arcade.</p><div class="actions"><a class="py-btn primary" href="{{ url_for('admin_courses',view=1) }}">Manage Courses</a><a class="py-btn" href="{{ url_for('admin_users',view=1) }}">Manage Users</a><a class="py-btn" href="{{ url_for('admin_leaderboard') }}">🏆 Leaderboard &amp; Badges</a><a class="py-btn" href="{{ url_for('admin_reports') }}">Reports</a><a class="py-btn" href="{{ url_for('admin_games') }}">🎮 Game Management</a></div></section>
+{% else %}
+<section class="py-card admin-hero"><h1>Welcome, {{ user.full_name }}! 👋</h1><p class="muted">Continue learning and earn points, badges, and achievements.</p></section><div class="py-grid"><div class="py-card"><div class="stat-icon">⭐</div><div class="stat-num">{{ points }}</div><div class="stat-label">Total Points</div></div><div class="py-card"><div class="stat-icon">📚</div><h3>Learn</h3><a class="py-btn primary" href="{{ url_for('courses') }}">Browse Courses</a></div><div class="py-card"><div class="stat-icon">🎮</div><h3>Play</h3><a class="py-btn primary" href="{{ url_for('games') }}">Learning Arcade</a><a class="py-btn" href="{{ url_for('shooter') }}">CSS Strike FPS</a></div></div><h2>Available Courses</h2><div class="py-grid">{% for c in courses %}<div class="py-card"><h3>{{ c.title }}</h3><p class="muted">{{ c.description }}</p><a class="py-btn primary" href="{{ url_for('course',cid=c.id) }}">Open Course</a></div>{% endfor %}</div>
+{% endif %}{% endblock %}

@@ -1,0 +1,50 @@
+{% extends 'base.html' %}{% block title %}Game Studio · E-Learning{% endblock %}{% block content %}
+<section class="py-card">
+  <div class="page-head"><div><p class="muted" style="margin:0">{{ game.course_title }} / {{ game.lesson_title }}</p><h1 style="margin:8px 0">🎮 {{ game.title }} — Game Studio</h1></div><a class="py-btn" href="{{ url_for('admin_games') }}">← All Games</a></div>
+  <p class="page-intro">Change the game settings, edit existing questions and choices, set the correct answer and points, or test the game before students play.</p>
+  <div class="actions"><a class="py-btn primary" href="{{ url_for('admin_game_test',gid=game.id) }}">▶ Play / Test This Game</a></div>
+</section>
+<section class="py-card">
+<h2>⚙ Game Settings</h2>
+<form method="post"><input type="hidden" name="action" value="settings">
+<label>Game Title</label><input name="title" required value="{{ game.title }}">
+<label>Description / Instructions</label><textarea name="description">{{ game.description }}</textarea>
+<div class="py-grid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr))">
+<div><label>Time Limit (seconds)</label><input type="number" name="time_limit" min="10" max="600" required value="{{ game.time_limit }}"></div>
+<div><label>Questions per play</label><input type="number" name="question_count" min="1" max="100" required value="{{ game.question_count }}"></div>
+</div>
+<label style="display:flex;align-items:center;gap:10px"><input style="width:auto;margin:0" type="checkbox" name="enabled" {% if game.enabled %}checked{% endif %}> Game enabled for students</label>
+<div class="actions"><button class="primary">Save Game Settings</button></div></form>
+</section>
+<section class="py-card">
+<h2>🧠 Question Bank <span class="muted" style="font-size:15px">({{ questions|length }} questions)</span></h2>
+<p class="muted">Each question has four editable choices, one correct answer, and its own point value.</p>
+{% for q in questions %}
+<details class="py-card" style="padding:16px;margin:12px 0" {% if loop.first %}open{% endif %}>
+<summary style="cursor:pointer;font-weight:800">{{ loop.index }}. {{ q.question }} <span class="muted">· {{ q.points }} pts · Correct: {{ q.correct_answer }}</span></summary>
+<form method="post" style="margin-top:16px"><input type="hidden" name="action" value="edit_question"><input type="hidden" name="question_id" value="{{ q.id }}">
+<label>Question</label><textarea name="question" required>{{ q.question }}</textarea>
+<div class="py-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px">
+{% for k in ['a','b','c','d'] %}<div><label>Choice {{ k|upper }}</label><input name="option_{{ k }}" required value="{{ q['option_'+k] }}"></div>{% endfor %}
+</div>
+<div class="py-grid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px">
+<div><label>Correct Answer</label><select name="correct_answer">{% for k in ['A','B','C','D'] %}<option value="{{ k }}" {% if q.correct_answer==k %}selected{% endif %}>{{ k }}</option>{% endfor %}</select></div>
+<div><label>Points</label><input type="number" name="points" min="0" max="1000" value="{{ q.points }}" required></div>
+</div>
+<div class="actions"><button class="primary">Save Question</button></div></form>
+<form method="post" action="{{ url_for('admin_game_question_delete',gid=game.id,qid=q.id) }}" onsubmit="return confirm('Delete this question permanently?')"><button class="danger">Delete Question</button></form>
+</details>
+{% else %}<p class="empty">No questions yet. Add the first question below.</p>{% endfor %}
+</section>
+<section class="py-card">
+<h2>➕ Add a Question</h2>
+<form method="post"><input type="hidden" name="action" value="add_question">
+<label>Question</label><textarea name="question" required placeholder="Type your question here"></textarea>
+<div class="py-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px">
+{% for k in ['a','b','c','d'] %}<div><label>Choice {{ k|upper }}</label><input name="option_{{ k }}" required placeholder="Choice {{ k|upper }}"></div>{% endfor %}
+</div>
+<div class="py-grid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px">
+<div><label>Correct Answer</label><select name="correct_answer"><option>A</option><option>B</option><option>C</option><option>D</option></select></div>
+<div><label>Points</label><input type="number" name="points" min="0" max="1000" value="10" required></div>
+</div><button class="primary">Add Question</button></form>
+</section>{% endblock %}
